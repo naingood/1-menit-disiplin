@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
-import type { AISettings, NotificationSettings } from '../types';
+import type { AISettings, NotificationSettings, ThemeSettings } from '../types';
 import { requestNotificationPermission, scheduleIntervalReminder, cancelIntervalReminder } from '../utils/notifications';
 
-const SettingsScreen: React.FC = () => {
+interface SettingsScreenProps {
+    onThemeChange: (themeSettings: ThemeSettings) => void;
+}
+
+const SettingsScreen: React.FC<SettingsScreenProps> = ({ onThemeChange }) => {
     const [settings, setSettings] = useLocalStorage<AISettings>('ai-settings', {
         provider: 'gemini',
         model: 'gemini-2.5-flash',
@@ -13,6 +17,9 @@ const SettingsScreen: React.FC = () => {
         enabled: false,
         intervalMinutes: 1,
         message: 'Apakah yang akan kamu kerjakan 1 menit ke depan?',
+    });
+    const [themeSettings, setThemeSettings] = useLocalStorage<ThemeSettings>('theme-settings', {
+        theme: 'system',
     });
     const [apiKeyInput, setApiKeyInput] = React.useState(settings.apiKey);
     const [modelInput, setModelInput] = React.useState(settings.model);
@@ -69,6 +76,12 @@ const SettingsScreen: React.FC = () => {
         } else {
             cancelIntervalReminder();
         }
+    };
+
+    const handleThemeChange = (newTheme: string) => {
+        const updatedThemeSettings = { theme: newTheme as 'light' | 'dark' | 'system' };
+        setThemeSettings(updatedThemeSettings);
+        onThemeChange(updatedThemeSettings);
     };
 
     const handleEnableNotifications = async () => {
@@ -168,6 +181,47 @@ const SettingsScreen: React.FC = () => {
                                 Simpan Pengaturan Notifikasi
                             </button>
                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="space-y-4 pt-6 border-t border-gray-200 dark:border-gray-700">
+                <h3 className="text-lg font-semibold text-gray-800 dark:text-white border-b border-gray-200 dark:border-gray-700 pb-2">Tema</h3>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                        Mode Tema
+                    </label>
+                    <div className="flex gap-3">
+                        <button
+                            onClick={() => handleThemeChange('light')}
+                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                                themeSettings.theme === 'light'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                            }`}
+                        >
+                            ☀️ Terang
+                        </button>
+                        <button
+                            onClick={() => handleThemeChange('dark')}
+                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                                themeSettings.theme === 'dark'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                            }`}
+                        >
+                            🌙 Gelap
+                        </button>
+                        <button
+                            onClick={() => handleThemeChange('system')}
+                            className={`px-4 py-2 rounded-lg font-medium transition ${
+                                themeSettings.theme === 'system'
+                                    ? 'bg-blue-600 text-white'
+                                    : 'bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600'
+                            }`}
+                        >
+                            💻 Sistem
+                        </button>
                     </div>
                 </div>
             </div>

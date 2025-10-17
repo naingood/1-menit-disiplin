@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
-import type { Task, StreakData, Achievement, AchievementIdea, AISettings, NotificationSettings } from './types';
+import type { Task, StreakData, Achievement, AchievementIdea, AISettings, NotificationSettings, Theme, ThemeSettings } from './types';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './screens/HomeScreen';
@@ -49,6 +49,9 @@ const App: React.FC = () => {
         intervalMinutes: 1,
         message: 'Apakah yang akan kamu kerjakan 1 menit ke depan?',
     });
+    const [themeSettings, setThemeSettings] = useLocalStorage<ThemeSettings>('theme-settings', {
+        theme: 'system',
+    });
     const today = getTodayDateString();
 
     useEffect(() => {
@@ -73,6 +76,36 @@ const App: React.FC = () => {
         };
         scheduleInterval();
     }, [notificationSettings]);
+
+    useEffect(() => {
+        const applyTheme = () => {
+            const root = document.documentElement;
+            const currentTheme = themeSettings.theme;
+
+            if (currentTheme === 'dark') {
+                root.classList.add('dark');
+            } else if (currentTheme === 'light') {
+                root.classList.remove('dark');
+            } else {
+                // system theme
+                const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (systemPrefersDark) {
+                    root.classList.add('dark');
+                } else {
+                    root.classList.remove('dark');
+                }
+            }
+        };
+
+        applyTheme();
+
+        if (themeSettings.theme === 'system') {
+            const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const handleChange = () => applyTheme();
+            mediaQuery.addEventListener('change', handleChange);
+            return () => mediaQuery.removeEventListener('change', handleChange);
+        }
+    }, [themeSettings]);
 
     const handleAddTask = useCallback((text: string) => {
         const newTask: Task = {
@@ -192,7 +225,7 @@ const App: React.FC = () => {
             case 'ideas':
                 return <IdeasScreen onAddTask={handleAddTask} onAddAchievement={handleAddAchievement} />;
             case 'settings':
-                return <SettingsScreen />;
+                return <SettingsScreen onThemeChange={setThemeSettings} />;
             default:
                  return <HomeScreen
                     tasks={tasks}

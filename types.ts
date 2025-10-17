@@ -22,6 +22,12 @@ export interface NotificationSettings {
   message: string;
 }
 
+export type Theme = 'light' | 'dark' | 'system';
+
+export interface ThemeSettings {
+  theme: Theme;
+}
+
 export interface Achievement {
   id: string;
   icon: string;
