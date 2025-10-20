@@ -8,6 +8,7 @@ interface ProgressScreenProps {
     achievements: Achievement[];
     onCompleteTask: (id: number) => void;
     onDeleteTask: (id: number) => void;
+    onTogglePinTask: (id: number) => void;
     today: string;
     onGenerateTasks: (achievementId: string) => void;
     generatingTasksForId: string | null;
@@ -17,7 +18,7 @@ interface DisplayAchievement extends Achievement {
     unlocked: boolean;
 }
 
-const ProgressScreen: React.FC<ProgressScreenProps> = ({ tasks, streakData, achievements, onCompleteTask, onDeleteTask, today, onGenerateTasks, generatingTasksForId }) => {
+const ProgressScreen: React.FC<ProgressScreenProps> = ({ tasks, streakData, achievements, onCompleteTask, onDeleteTask, onTogglePinTask, today, onGenerateTasks, generatingTasksForId }) => {
     const totalCompletions = useMemo(() => {
         return tasks.reduce((total, task) => {
             return total + Object.values(task.completions).reduce((sum, count) => sum + count, 0);
@@ -81,12 +82,13 @@ const ProgressScreen: React.FC<ProgressScreenProps> = ({ tasks, streakData, achi
                     {processedAchievements.map(ach => {
                         const achievementTasks = tasks.filter(task => task.achievementId === ach.id);
                         const isGenerating = generatingTasksForId === ach.id;
-                        return <AchievementCard 
-                            key={ach.id} 
-                            achievement={ach} 
+                        return <AchievementCard
+                            key={ach.id}
+                            achievement={ach}
                             tasks={achievementTasks}
                             onCompleteTask={onCompleteTask}
                             onDeleteTask={onDeleteTask}
+                            onTogglePinTask={onTogglePinTask}
                             today={today}
                             onGenerateTasks={onGenerateTasks}
                             isGenerating={isGenerating}

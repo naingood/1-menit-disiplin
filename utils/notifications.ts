@@ -35,7 +35,43 @@ export async function showMotivationalNotification(streak: number): Promise<void
         body: 'Kerja bagus! Tetap semangat dan lanjutkan momentumnya!',
         icon: '/icons/icon-192x192.png',
         badge: '/icons/icon-192x192.png',
-        tag: 'streak-motivation' 
+        tag: 'streak-motivation'
+    };
+
+    await registration.showNotification(title, options);
+}
+
+export async function showAppreciationNotification(completedTasks: number): Promise<void> {
+    const registration = await getRegistration();
+    if (!registration || Notification.permission !== 'granted') {
+        return;
+    }
+
+    // Show appreciation for every 3 tasks completed
+    if (completedTasks % 3 !== 0) {
+        return;
+    }
+
+    const messages = [
+        '🎉 Hebat! 3 tugas selesai hari ini!',
+        '🚀 Luar biasa! Sudah 6 tugas hari ini!',
+        '⭐ Kamu luar biasa! 9 tugas selesai!',
+        '🏆 Legenda! 12 tugas hari ini!',
+        '💎 Kamu tak terhentikan! 15 tugas!',
+        '🌟 Pencapaian luar biasa! 18 tugas!',
+        '👑 Raja produktivitas! 21 tugas!',
+        '🔥 Api semangat tak pernah padam! 24 tugas!',
+        '💪 Kamu adalah inspirasi! 27 tugas!',
+        '🎯 Target harian tercapai! 30 tugas!'
+    ];
+
+    const messageIndex = Math.min(Math.floor(completedTasks / 3) - 1, messages.length - 1);
+    const title = messages[messageIndex];
+    const options: NotificationOptions = {
+        body: 'Teruskan momentum positifmu!',
+        icon: '/icons/icon-192x192.png',
+        badge: '/icons/icon-192x192.png',
+        tag: 'appreciation-notification'
     };
 
     await registration.showNotification(title, options);

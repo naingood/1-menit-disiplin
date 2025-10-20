@@ -3,6 +3,8 @@ export interface Task {
   text: string;
   completions: { [date: string]: number };
   achievementId?: string; // Menambahkan tautan opsional ke sebuah pencapaian
+  pinned?: boolean; // Menandai apakah task di-pin
+  pinnedOrder?: number; // Urutan pin (1-3)
 }
 
 export interface StreakData {
@@ -11,7 +13,7 @@ export interface StreakData {
 }
 
 export interface AISettings {
-  provider: 'gemini';
+  provider: 'gemini' | 'openai' | 'anthropic';
   model: string;
   apiKey: string;
 }
@@ -22,10 +24,14 @@ export interface NotificationSettings {
   message: string;
 }
 
-export type Theme = 'light' | 'dark' | 'system';
+export type Theme = 'light';
 
 export interface ThemeSettings {
   theme: Theme;
+}
+
+export interface CelebrationSettings {
+  target: number;
 }
 
 export interface Achievement {

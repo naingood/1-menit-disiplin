@@ -14,15 +14,17 @@ interface HomeScreenProps {
     onCompleteTask: (id: number) => void;
     onDeleteTask: (id: number) => void;
     onViewAchievement: (achievementId: string) => void;
+    onTogglePinTask: (id: number) => void;
+    onShareTasks?: () => void;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ tasks, achievements, today, streak, onAddTask, onCompleteTask, onDeleteTask, onViewAchievement }) => {
+const HomeScreen: React.FC<HomeScreenProps> = ({ tasks, achievements, today, streak, onAddTask, onCompleteTask, onDeleteTask, onViewAchievement, onTogglePinTask, onShareTasks }) => {
     
     return (
         <>
             <Summary tasks={tasks} today={today} />
             {streak > 0 && <StreakTracker streak={streak} />}
-            <AddTaskForm onAddTask={onAddTask} />
+            <AddTaskForm onAddTask={onAddTask} tasks={tasks} onShareTasks={onShareTasks} />
             <div className="mt-8 space-y-4">
                 {tasks.length > 0 ? (
                     tasks.map(task => {
@@ -37,6 +39,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ tasks, achievements, today, str
                                 today={today}
                                 onComplete={onCompleteTask}
                                 onDelete={onDeleteTask}
+                                onTogglePin={onTogglePinTask}
                                 achievementTitle={achievementTitle}
                                 onViewAchievement={onViewAchievement}
                             />

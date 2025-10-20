@@ -11,12 +11,13 @@ interface AchievementCardProps {
     tasks: Task[];
     onCompleteTask: (id: number) => void;
     onDeleteTask: (id: number) => void;
+    onTogglePinTask: (id: number) => void;
     today: string;
     onGenerateTasks: (achievementId: string) => void;
     isGenerating: boolean;
 }
 
-const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, tasks, onCompleteTask, onDeleteTask, today, onGenerateTasks, isGenerating }) => {
+const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, tasks, onCompleteTask, onDeleteTask, onTogglePinTask, today, onGenerateTasks, isGenerating }) => {
     const showGenerateButton = achievement.id.startsWith('custom_') && tasks.length === 0 && !achievement.unlocked;
     
     return (
@@ -45,12 +46,13 @@ const AchievementCard: React.FC<AchievementCardProps> = ({ achievement, tasks, o
                 <div className="mt-4 pl-4 border-l-2 border-gray-300 dark:border-gray-600 space-y-2">
                     <h4 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-2">Tugas Terkait:</h4>
                     {tasks.map(task => (
-                        <TaskItem 
+                        <TaskItem
                             key={task.id}
                             task={task}
                             today={today}
                             onComplete={onCompleteTask}
                             onDelete={onDeleteTask}
+                            onTogglePin={onTogglePinTask}
                         />
                     ))}
                 </div>

@@ -1,4 +1,4 @@
-# Prompt untuk Generate Aplikasi PWA "Pelacak Kreator 1 Menit"
+# Prompt untuk Generate Aplikasi PWA "1 Menit Disiplin"
 
 Berikut adalah prompt lengkap yang dapat digunakan untuk menghasilkan aplikasi PWA serupa menggunakan AI atau tools development.
 
@@ -10,7 +10,7 @@ Buatlah aplikasi Progressive Web App (PWA) untuk "Pelacak Kreator 1 Menit" denga
 ## 📋 Spesifikasi Aplikasi
 
 ### **Tujuan Utama**
-Aplikasi PWA yang membantu kreator konten membangun konsistensi melalui tugas-tugas kecil yang dapat diselesaikan dalam waktu 1 menit.
+Aplikasi PWA yang membantu membangun konsistensi melalui tugas-tugas mikro yang dapat diselesaikan dalam waktu 1 menit.
 
 ### **Teknologi Stack**
 - Frontend: React 19 dengan TypeScript
@@ -43,7 +43,7 @@ Aplikasi PWA yang membantu kreator konten membangun konsistensi melalui tugas-tu
 - Reset streak jika ada hari tanpa penyelesaian
 
 #### 4. **Integrasi AI**
-- Generate ide tugas berdasarkan tujuan kreator
+- Generate ide tugas mikro berdasarkan tujuan apa pun
 - Buat pencapaian kustom dengan deskripsi
 - Gunakan Google Gemini API untuk content generation
 
@@ -155,8 +155,8 @@ npm install @google/genai tailwindcss
 ### **Manifest.json**
 ```json
 {
-  "short_name": "Pelacak 1Menit",
-  "name": "Pelacak Kreator 1 Menit",
+  "short_name": "Disiplin 1M",
+  "name": "1 Menit Disiplin",
   "start_url": ".",
   "display": "standalone",
   "theme_color": "#1f2937",
@@ -225,7 +225,7 @@ Tech stack: React + TypeScript + Tailwind CSS + Vite
 ## 🎯 Prompt untuk AI Code Generator
 
 ```
-Generate a complete PWA codebase for a "1-Minute Creator Tracker" with these features:
+Generate a complete PWA codebase for a "1 Menit Disiplin" with these features:
 - Task management with daily completion tracking
 - Achievement system with streaks
 - 1-minute countdown timer with modal

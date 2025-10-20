@@ -93,7 +93,7 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
                     </h2>
                     <p className="text-gray-600 dark:text-gray-400 mb-4">
                         {isTaskTab
-                            ? 'Jelaskan tujuan utama Anda, dan AI akan menyarankan tugas 1 menit.'
+                            ? 'Jelaskan tujuan utama Anda, dan AI akan menyarankan tugas mikro 1 menit.'
                             : 'Dapatkan ide pencapaian yang memotivasi berdasarkan tujuan Anda.'}
                     </p>
                     <div className="flex flex-col sm:flex-row gap-2">
@@ -101,7 +101,7 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
                             type="text"
                             value={goal}
                             onChange={(e) => setGoal(e.target.value)}
-                            placeholder="contoh: Kembangkan channel YouTube saya"
+                            placeholder="contoh: Tingkatkan produktivitas harian"
                             className="flex-grow p-3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
                             disabled={isLoading}
                         />
