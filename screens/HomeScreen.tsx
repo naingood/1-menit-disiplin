@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import type { Task, Achievement } from '../types';
-import Summary from '../components/Summary';
+import DashboardHero from '../components/DashboardHero';
+import EmptyState from '../components/EmptyState';
+import TaskSection from '../components/TaskSection';
 import AddTaskForm from '../components/AddTaskForm';
-import TaskItem from '../components/TaskItem';
-import StreakTracker from '../components/StreakTracker';
 
 interface HomeScreenProps {
     tasks: Task[];
@@ -16,41 +16,116 @@ interface HomeScreenProps {
     onViewAchievement: (achievementId: string) => void;
     onTogglePinTask: (id: number) => void;
     onShareTasks?: () => void;
+    onStartTimer?: () => void;
+    onViewProgress?: () => void;
 }
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ tasks, achievements, today, streak, onAddTask, onCompleteTask, onDeleteTask, onViewAchievement, onTogglePinTask, onShareTasks }) => {
-    
+const HomeScreen: React.FC<HomeScreenProps> = ({
+    tasks,
+    achievements,
+    today,
+    streak,
+    onAddTask,
+    onCompleteTask,
+    onDeleteTask,
+    onViewAchievement,
+    onTogglePinTask,
+    onShareTasks,
+    onStartTimer,
+    onViewProgress
+}) => {
+    const [showAddForm, setShowAddForm] = useState(false);
+
+    const pinnedTasks = tasks.filter(task => task.pinned);
+    const regularTasks = tasks.filter(task => !task.pinned);
+
+    const handleAddTaskClick = () => {
+        setShowAddForm(true);
+        // Scroll to form after a brief delay to allow state update
+        setTimeout(() => {
+            document.getElementById('add-task-form')?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
+    };
+
+    const handleTaskAdded = (text: string) => {
+        onAddTask(text);
+        setShowAddForm(false);
+    };
+
+    if (tasks.length === 0) {
+        return (
+            <>
+                <DashboardHero
+                    tasks={tasks}
+                    achievements={achievements}
+                    today={today}
+                    streak={streak}
+                />
+                <EmptyState
+                    onAddTask={handleAddTaskClick}
+                    onStartTimer={onStartTimer}
+                />
+
+            </>
+        );
+    }
+
     return (
         <>
-            <Summary tasks={tasks} today={today} />
-            {streak > 0 && <StreakTracker streak={streak} />}
-            <AddTaskForm onAddTask={onAddTask} tasks={tasks} onShareTasks={onShareTasks} />
-            <div className="mt-8 space-y-4">
-                {tasks.length > 0 ? (
-                    tasks.map(task => {
-                        const achievementTitle = task.achievementId 
-                            ? achievements.find(a => a.id === task.achievementId)?.title
-                            : undefined;
+            <DashboardHero
+                tasks={tasks}
+                achievements={achievements}
+                today={today}
+                streak={streak}
+                onStartTimer={onStartTimer}
+            />
 
-                        return (
-                            <TaskItem
-                                key={task.id}
-                                task={task}
-                                today={today}
-                                onComplete={onCompleteTask}
-                                onDelete={onDeleteTask}
-                                onTogglePin={onTogglePinTask}
-                                achievementTitle={achievementTitle}
-                                onViewAchievement={onViewAchievement}
-                            />
-                        );
-                    })
-                ) : (
-                    <div className="text-center p-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                        <p className="text-gray-500 dark:text-gray-400">Belum ada tugas. Tambahkan satu untuk memulai!</p>
-                    </div>
+            {/* Add Task Form - conditionally shown */}
+            {(showAddForm || tasks.length > 0) && (
+                <div id="add-task-form" className="mb-8">
+                    <AddTaskForm
+                        onAddTask={handleTaskAdded}
+                        tasks={tasks}
+                        onShareTasks={onShareTasks}
+                    />
+                </div>
+            )}
+
+            {/* Task Sections */}
+            <div className="space-y-6">
+                {/* Pinned Tasks Section */}
+                {pinnedTasks.length > 0 && (
+                    <TaskSection
+                        title="Tugas Prioritas"
+                        tasks={pinnedTasks}
+                        achievements={achievements}
+                        today={today}
+                        onComplete={onCompleteTask}
+                        onDelete={onDeleteTask}
+                        onTogglePin={onTogglePinTask}
+                        onViewAchievement={onViewAchievement}
+                        icon="📌"
+                        variant="pinned"
+                    />
                 )}
+
+                {/* Regular Tasks Section */}
+                <TaskSection
+                    title="Tugas Konsisten"
+                    tasks={regularTasks}
+                    achievements={achievements}
+                    today={today}
+                    onComplete={onCompleteTask}
+                    onDelete={onDeleteTask}
+                    onTogglePin={onTogglePinTask}
+                    onViewAchievement={onViewAchievement}
+                    emptyMessage="Belum ada tugas konsisten. Tambahkan tugas pertama Anda!"
+                    icon="📝"
+                    variant="regular"
+                />
             </div>
+
+
         </>
     );
 };

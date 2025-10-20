@@ -59,6 +59,7 @@ const App: React.FC = () => {
         target: 3,
     });
     const [showCelebration, setShowCelebration] = useState(false);
+    const [showTimer, setShowTimer] = useState(false);
     const today = getTodayDateString();
 
     useEffect(() => {
@@ -296,6 +297,9 @@ Pin: ${isPinned}
                     onDeleteTask={handleDeleteTask}
                     onViewAchievement={handleViewAchievement}
                     onTogglePinTask={handleTogglePinTask}
+                    onShareTasks={handleShareTasks}
+                    onStartTimer={() => setShowTimer(true)}
+                    onViewProgress={() => setActiveScreen('progress')}
                 />;
             case 'progress':
                 return <ProgressScreen

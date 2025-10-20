@@ -141,70 +141,71 @@ const Header: React.FC<HeaderProps> = ({ onSettingsClick, onProfileClick }) => {
 
   return (
     <>
-      <header className="relative p-6 bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-800 dark:to-gray-900 shadow-lg rounded-b-2xl border-b border-blue-200 dark:border-gray-700">
-        <div className="flex justify-between items-start">
-          <div className="flex-1 text-center">
-            <div className="inline-flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-                <span className="text-white text-xl">⚡</span>
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  1 Menit Disiplin
-                </h1>
-                <div className="h-0.5 bg-gradient-to-r from-blue-400 to-indigo-400 rounded-full mt-1"></div>
-              </div>
+      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-40">
+        <div className="flex items-center justify-between max-w-2xl mx-auto">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+              <span className="text-white text-sm">⚡</span>
             </div>
-            <p className="text-gray-600 dark:text-gray-300 mt-2 text-sm font-medium">
-              Bangun konsistensi, satu tugas kecil setiap saat.
-            </p>
+            <div>
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                1 Menit Disiplin
+              </h1>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Bangun konsistensi setiap hari
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
             <button
               onClick={startTimer}
-              className="mt-4 px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold rounded-xl transition-all duration-300 flex items-center gap-2 mx-auto shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+              className="px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-1"
             >
-              <span className="text-lg">⏱️</span>
-              Timer 1 Menit
-            </button>
-          </div>
-          <div className="relative menu-container">
-            <button
-              onClick={() => setShowMenu(!showMenu)}
-              className="p-3 text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-white transition-colors rounded-full hover:bg-white/50 dark:hover:bg-gray-700/50"
-              aria-label="Menu"
-            >
-              <span className="text-xl">⋮</span>
+              <span className="text-base">⏱️</span>
+              Timer
             </button>
 
-            {showMenu && (
-              <div className="absolute right-0 top-full mt-3 w-52 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 z-50 overflow-hidden">
-                <div className="py-2">
-                  {onProfileClick && (
-                    <button
-                      onClick={() => {
-                        onProfileClick();
-                        setShowMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
-                    >
-                      <span className="text-lg">👤</span>
-                      Profil
-                    </button>
-                  )}
-                  {onSettingsClick && (
-                    <button
-                      onClick={() => {
-                        onSettingsClick();
-                        setShowMenu(false);
-                      }}
-                      className="w-full text-left px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
-                    >
-                      <span className="text-lg">⚙️</span>
-                      Pengaturan
-                    </button>
-                  )}
+            <div className="relative menu-container">
+              <button
+                onClick={() => setShowMenu(!showMenu)}
+                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                aria-label="Menu"
+              >
+                <span className="text-lg">⋮</span>
+              </button>
+
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700 z-50 overflow-hidden">
+                  <div className="py-1">
+                    {onProfileClick && (
+                      <button
+                        onClick={() => {
+                          onProfileClick();
+                          setShowMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
+                      >
+                        <span className="text-lg">👤</span>
+                        Profil
+                      </button>
+                    )}
+                    {onSettingsClick && (
+                      <button
+                        onClick={() => {
+                          onSettingsClick();
+                          setShowMenu(false);
+                        }}
+                        className="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center gap-3"
+                      >
+                        <span className="text-lg">⚙️</span>
+                        Pengaturan
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </header>
