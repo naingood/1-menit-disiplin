@@ -244,6 +244,238 @@ Format respons sebagai JSON dengan struktur: {"achievements": [{"title": "judul"
     }
 }
 
+export async function generateQuotes(concept: string, settings: AISettings): Promise<string[]> {
+    if (settings.provider === 'gemini') {
+        const { GoogleGenAI } = await import('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: settings.apiKey });
+
+        const model = settings.model || 'gemini-2.5-flash';
+
+        const prompt = `Buatkan 10 quote tokoh dunia sesuai dengan ${concept}. Dengan format : Quote - (nama tokoh)`;
+
+        try {
+            const response = await ai.models.generateContent({
+                model: model,
+                contents: prompt,
+                config: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: 'OBJECT',
+                        properties: {
+                            quotes: {
+                                type: 'ARRAY',
+                                description: "Sebuah daftar berisi 10 quote tokoh dunia.",
+                                items: {
+                                    type: 'STRING'
+                                }
+                            }
+                        },
+                        required: ["quotes"]
+                    },
+                },
+            });
+
+            const jsonText = response.text.trim();
+            const result = JSON.parse(jsonText);
+
+            if (result && Array.isArray(result.quotes)) {
+                 return result.quotes;
+            } else {
+                throw new Error("Respons AI tidak dalam format yang diharapkan.");
+            }
+
+        } catch (error) {
+            console.error("Error calling AI service for quotes:", error);
+            if (error instanceof Error && (error.message.includes('API key not valid') || error.message.includes('API key is missing'))) {
+                throw new Error("Kunci API tidak valid atau hilang. Silakan periksa kunci Anda di tab Pengaturan.");
+            }
+            throw new Error("Gagal menghasilkan quote dari AI. Model mungkin tidak tersedia atau permintaan gagal.");
+        }
+    } else if (settings.provider === 'openai') {
+        const { OpenAI } = await import('openai');
+        const ai = new OpenAI({ apiKey: settings.apiKey, dangerouslyAllowBrowser: true });
+
+        const model = settings.model || 'gpt-4o-mini';
+
+        const prompt = `Buatkan 10 quote tokoh dunia sesuai dengan ${concept}. Dengan format : Quote - (nama tokoh)`;
+
+        try {
+            const response = await ai.chat.completions.create({
+                model: model,
+                messages: [{ role: 'user', content: prompt }],
+                response_format: { type: 'json_object' },
+            });
+
+            const jsonText = response.choices[0]?.message?.content?.trim() || '';
+            const result = JSON.parse(jsonText);
+
+            if (result && Array.isArray(result.quotes)) {
+                 return result.quotes;
+            } else {
+                throw new Error("Respons AI tidak dalam format yang diharapkan.");
+            }
+
+        } catch (error) {
+            console.error("Error calling OpenAI service for quotes:", error);
+            if (error instanceof Error && (error.message.includes('API key not valid') || error.message.includes('API key is missing'))) {
+                throw new Error("Kunci API tidak valid atau hilang. Silakan periksa kunci Anda di tab Pengaturan.");
+            }
+            throw new Error("Gagal menghasilkan quote dari AI. Model mungkin tidak tersedia atau permintaan gagal.");
+        }
+    } else if (settings.provider === 'anthropic') {
+        const { Anthropic } = await import('@anthropic-ai/sdk');
+        const ai = new Anthropic({ apiKey: settings.apiKey });
+
+        const model = settings.model || 'claude-3-haiku-20240307';
+
+        const prompt = `Buatkan 10 quote tokoh dunia sesuai dengan ${concept}. Dengan format : Quote - (nama tokoh)
+
+Format respons sebagai JSON dengan struktur: {"quotes": ["quote1", "quote2", ...]}`;
+
+        try {
+            const response = await ai.messages.create({
+                model: model,
+                max_tokens: 1500,
+                messages: [{ role: 'user', content: prompt }],
+            });
+
+            const jsonText = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
+            const result = JSON.parse(jsonText);
+
+            if (result && Array.isArray(result.quotes)) {
+                 return result.quotes;
+            } else {
+                throw new Error("Respons AI tidak dalam format yang diharapkan.");
+            }
+
+        } catch (error) {
+            console.error("Error calling Anthropic service for quotes:", error);
+            if (error instanceof Error && (error.message.includes('API key not valid') || error.message.includes('API key is missing'))) {
+                throw new Error("Kunci API tidak valid atau hilang. Silakan periksa kunci Anda di tab Pengaturan.");
+            }
+            throw new Error("Gagal menghasilkan quote dari AI. Model mungkin tidak tersedia atau permintaan gagal.");
+        }
+    } else {
+        throw new Error(`Provider ${settings.provider} belum diimplementasikan.`);
+    }
+}
+
+export async function generateAffirmations(theme: string, settings: AISettings): Promise<string[]> {
+    if (settings.provider === 'gemini') {
+        const { GoogleGenAI } = await import('@google/genai');
+        const ai = new GoogleGenAI({ apiKey: settings.apiKey });
+
+        const model = settings.model || 'gemini-2.5-flash';
+
+        const prompt = `Sebagai ahli motivasi, buatlah daftar berisi tepat 5 afirmasi positif dan memotivasi berdasarkan tema: "${theme}". Afirmasi harus singkat, kuat, dan dalam bentuk pernyataan positif di waktu sekarang.`;
+
+        try {
+            const response = await ai.models.generateContent({
+                model: model,
+                contents: prompt,
+                config: {
+                    responseMimeType: "application/json",
+                    responseSchema: {
+                        type: 'OBJECT',
+                        properties: {
+                            affirmations: {
+                                type: 'ARRAY',
+                                description: "Sebuah daftar berisi 5 afirmasi positif.",
+                                items: {
+                                    type: 'STRING'
+                                }
+                            }
+                        },
+                        required: ["affirmations"]
+                    },
+                },
+            });
+
+            const jsonText = response.text.trim();
+            const result = JSON.parse(jsonText);
+
+            if (result && Array.isArray(result.affirmations)) {
+                 return result.affirmations;
+            } else {
+                throw new Error("Respons AI tidak dalam format yang diharapkan.");
+            }
+
+        } catch (error) {
+            console.error("Error calling AI service for affirmations:", error);
+            if (error instanceof Error && (error.message.includes('API key not valid') || error.message.includes('API key is missing'))) {
+                throw new Error("Kunci API tidak valid atau hilang. Silakan periksa kunci Anda di tab Pengaturan.");
+            }
+            throw new Error("Gagal menghasilkan afirmasi dari AI. Model mungkin tidak tersedia atau permintaan gagal.");
+        }
+    } else if (settings.provider === 'openai') {
+        const { OpenAI } = await import('openai');
+        const ai = new OpenAI({ apiKey: settings.apiKey, dangerouslyAllowBrowser: true });
+
+        const model = settings.model || 'gpt-4o-mini';
+
+        const prompt = `Sebagai ahli motivasi, buatlah daftar berisi tepat 5 afirmasi positif dan memotivasi berdasarkan tema: "${theme}". Afirmasi harus singkat, kuat, dan dalam bentuk pernyataan positif di waktu sekarang.`;
+
+        try {
+            const response = await ai.chat.completions.create({
+                model: model,
+                messages: [{ role: 'user', content: prompt }],
+                response_format: { type: 'json_object' },
+            });
+
+            const jsonText = response.choices[0]?.message?.content?.trim() || '';
+            const result = JSON.parse(jsonText);
+
+            if (result && Array.isArray(result.affirmations)) {
+                 return result.affirmations;
+            } else {
+                throw new Error("Respons AI tidak dalam format yang diharapkan.");
+            }
+
+        } catch (error) {
+            console.error("Error calling OpenAI service for affirmations:", error);
+            if (error instanceof Error && (error.message.includes('API key not valid') || error.message.includes('API key is missing'))) {
+                throw new Error("Kunci API tidak valid atau hilang. Silakan periksa kunci Anda di tab Pengaturan.");
+            }
+            throw new Error("Gagal menghasilkan afirmasi dari AI. Model mungkin tidak tersedia atau permintaan gagal.");
+        }
+    } else if (settings.provider === 'anthropic') {
+        const { Anthropic } = await import('@anthropic-ai/sdk');
+        const ai = new Anthropic({ apiKey: settings.apiKey });
+
+        const model = settings.model || 'claude-3-haiku-20240307';
+
+        const prompt = `Sebagai ahli motivasi, buatlah daftar berisi tepat 5 afirmasi positif dan memotivasi berdasarkan tema: "${theme}". Afirmasi harus singkat, kuat, dan dalam bentuk pernyataan positif di waktu sekarang.
+
+Format respons sebagai JSON dengan struktur: {"affirmations": ["afirmasi1", "afirmasi2", ...]}`;
+
+        try {
+            const response = await ai.messages.create({
+                model: model,
+                max_tokens: 1000,
+                messages: [{ role: 'user', content: prompt }],
+            });
+
+            const jsonText = response.content[0]?.type === 'text' ? response.content[0].text.trim() : '';
+            const result = JSON.parse(jsonText);
+
+            if (result && Array.isArray(result.affirmations)) {
+                 return result.affirmations;
+            } else {
+                throw new Error("Respons AI tidak dalam format yang diharapkan.");
+            }
+
+        } catch (error) {
+            console.error("Error calling Anthropic service for affirmations:", error);
+            if (error instanceof Error && (error.message.includes('API key not valid') || error.message.includes('API key is missing'))) {
+                throw new Error("Kunci API tidak valid atau hilang. Silakan periksa kunci Anda di tab Pengaturan.");
+            }
+            throw new Error("Gagal menghasilkan afirmasi dari AI. Model mungkin tidak tersedia atau permintaan gagal.");
+        }
+    } else {
+        throw new Error(`Provider ${settings.provider} belum diimplementasikan.`);
+    }
+}
+
 export async function generateTasksForAchievement(achievementTitle: string, achievementDescription: string, settings: AISettings): Promise<string[]> {
     if (settings.provider === 'gemini') {
         const { GoogleGenAI } = await import('@google/genai');

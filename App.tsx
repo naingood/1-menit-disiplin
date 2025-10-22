@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import useLocalStorage from './hooks/useLocalStorage';
-import type { Task, StreakData, Achievement, AchievementIdea, AISettings, NotificationSettings, Theme, ThemeSettings, CelebrationSettings } from './types';
+import type { Task, StreakData, Achievement, AchievementIdea, Affirmation, AISettings, NotificationSettings, Theme, ThemeSettings, CelebrationSettings } from './types';
 import Header from './components/Header';
 import BottomNav from './components/BottomNav';
 import HomeScreen from './screens/HomeScreen';
@@ -24,9 +24,9 @@ const getTodayDateString = () => {
 };
 
 const defaultTasks: Task[] = [
-    { id: 1, text: "Balas 1 komentar", completions: {}, pinned: false },
-    { id: 2, text: "Rekam 1 klip video pendek", completions: {}, pinned: false },
-    { id: 3, text: "Cek ide konten di catatan", completions: {}, pinned: false }
+    { id: 1, text: "Balas 1 komentar", completions: {}, pinned: false, createdAt: new Date().toISOString() },
+    { id: 2, text: "Rekam 1 klip video pendek", completions: {}, pinned: false, createdAt: new Date().toISOString() },
+    { id: 3, text: "Cek ide konten di catatan", completions: {}, pinned: false, createdAt: new Date().toISOString() }
 ];
 
 const defaultAchievements: Achievement[] = [
@@ -58,6 +58,7 @@ const App: React.FC = () => {
     const [celebrationSettings, setCelebrationSettings] = useLocalStorage<CelebrationSettings>('celebration-settings', {
         target: 3,
     });
+    const [affirmations, setAffirmations] = useLocalStorage<Affirmation[]>('affirmations', []);
     const [showCelebration, setShowCelebration] = useState(false);
     const [showTimer, setShowTimer] = useState(false);
     const today = getTodayDateString();
@@ -101,6 +102,7 @@ const App: React.FC = () => {
             text,
             completions: {},
             pinned: false,
+            createdAt: new Date().toISOString(),
         };
         setTasks(prevTasks => [newTask, ...prevTasks]);
     }, [setTasks]);
@@ -131,6 +133,7 @@ const App: React.FC = () => {
                 completions: {},
                 achievementId: achievement.id,
                 pinned: false,
+                createdAt: new Date().toISOString(),
             }));
             setTasks(prevTasks => [...prevTasks, ...newTasks]);
         } catch (error) {
@@ -259,6 +262,19 @@ const App: React.FC = () => {
         setTasks(prevTasks => [...prevTasks, ...importedTasks]);
     }, [setTasks]);
 
+    const handleAddAffirmation = useCallback((text: string) => {
+        const newAffirmation: Affirmation = {
+            id: Date.now(),
+            text,
+            date: today,
+        };
+        setAffirmations(prev => [newAffirmation, ...prev]);
+    }, [setAffirmations, today]);
+
+    const handleDeleteAffirmation = useCallback((id: number) => {
+        setAffirmations(prev => prev.filter(affirmation => affirmation.id !== id));
+    }, [setAffirmations]);
+
     const handleShareTasks = useCallback(() => {
         const shareText = tasks.map((task, index) => {
             const todayCompletions = task.completions[today] || 0;
@@ -290,6 +306,7 @@ Pin: ${isPinned}
                 return <HomeScreen
                     tasks={tasks}
                     achievements={achievements}
+                    affirmations={affirmations}
                     today={today}
                     streak={streakData.currentStreak}
                     onAddTask={handleAddTask}
@@ -300,6 +317,7 @@ Pin: ${isPinned}
                     onShareTasks={handleShareTasks}
                     onStartTimer={() => setShowTimer(true)}
                     onViewProgress={() => setActiveScreen('progress')}
+                    onDeleteAffirmation={handleDeleteAffirmation}
                 />;
             case 'progress':
                 return <ProgressScreen
@@ -314,7 +332,7 @@ Pin: ${isPinned}
                     generatingTasksForId={isGeneratingTasks}
                 />;
             case 'ideas':
-                return <IdeasScreen onAddTask={handleAddTask} onAddAchievement={handleAddAchievement} />;
+                return <IdeasScreen onAddTask={handleAddTask} onAddAchievement={handleAddAchievement} onAddAffirmation={handleAddAffirmation} />;
             case 'profile':
                 return <ProfileScreen
                     tasks={tasks}

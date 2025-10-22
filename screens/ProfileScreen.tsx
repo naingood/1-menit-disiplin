@@ -14,10 +14,15 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ tasks, achievements, stre
         return total + Object.values(task.completions).reduce((sum: number, count: number) => sum + count, 0);
     }, 0);
 
+    const today = new Date().toISOString().split('T')[0];
+
     const tasksCompletedToday = tasks.reduce((total, task) => {
-        const today = new Date().toISOString().split('T')[0];
         return total + (task.completions[today] || 0);
     }, 0);
+
+    const tasksCompletedTodayCount = tasks.filter(task => (task.completions[today] || 0) > 0).length;
+
+    const productivityToday = tasks.length > 0 ? Math.round((tasksCompletedTodayCount / tasks.length) * 100) : 0;
 
     const achievementsUnlocked = achievements.length;
 
@@ -90,76 +95,102 @@ pin: ${isPinned}`;
 
     return (
         <div className="space-y-6">
-            {/* Header Profil */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
-                <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span className="text-3xl">👤</span>
+            {/* Header Profil - Elegant Gradient Design */}
+            <div className="bg-gradient-to-br from-blue-900 to-black rounded-2xl p-8 text-center shadow-xl border border-blue-800">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <span className="text-4xl">👤</span>
                 </div>
-                <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">Profil Kreator</h1>
-                <p className="text-gray-600 dark:text-gray-400">
+                <h1 className="text-3xl font-bold text-white mb-3">Profil</h1>
+                <p className="text-blue-100 text-lg">
                     Pelacak kemajuan Anda dalam membangun disiplin 1 menit
                 </p>
             </div>
 
-            {/* Statistik */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Statistik Cards - Glassmorphism Effect */}
+            <div className="grid grid-cols-2 gap-6">
                 {profileStats.map((stat, index) => (
-                    <div key={index} className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 text-center">
-                        <div className={`text-2xl mb-2 ${stat.color}`}>
+                    <div key={index} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-lg p-6 text-center border border-white/20 dark:border-gray-700/50 hover:shadow-xl transition-all duration-300">
+                        <div className={`text-3xl mb-3 ${stat.color}`}>
                             {stat.icon}
                         </div>
-                        <div className="text-2xl font-bold text-gray-800 dark:text-white mb-1">
+                        <div className="text-3xl font-bold text-gray-800 dark:text-white mb-2">
                             {stat.value}
                         </div>
-                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                        <div className="text-sm font-medium text-gray-600 dark:text-gray-400 uppercase tracking-wide">
                             {stat.label}
                         </div>
                     </div>
                 ))}
             </div>
 
-            {/* Progress Overview */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
-                <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-4">
-                    📊 Ringkasan Kemajuan
-                </h2>
+            {/* Productivity Today Card - Separate Card */}
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-2xl shadow-lg p-6 border border-emerald-100 dark:border-emerald-700">
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <div className="w-12 h-12 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md">
+                            <span className="text-white text-xl">📈</span>
+                        </div>
+                        <div>
+                            <div className="text-lg font-semibold text-gray-800 dark:text-gray-200">Produktivitas Hari Ini</div>
+                            <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">{productivityToday}%</div>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <div className="text-xs text-gray-500 dark:text-gray-400">Target</div>
+                        <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">100%</div>
+                    </div>
+                </div>
+            </div>
 
-                <div className="space-y-4">
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-600 dark:text-gray-400">Total Tugas</span>
-                        <span className="font-semibold text-gray-800 dark:text-white">{tasks.length}</span>
+            {/* Progress Overview - Enhanced Design */}
+            <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-emerald-600 rounded-full flex items-center justify-center shadow-md">
+                        <span className="text-white text-lg">📊</span>
+                    </div>
+                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                        Ringkasan Kemajuan
+                    </h2>
+                </div>
+
+                <div className="space-y-5">
+                    <div className="flex justify-between items-center p-4 bg-white/50 dark:bg-gray-700/50 rounded-xl">
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">Total Tugas</span>
+                        <span className="font-bold text-gray-800 dark:text-white text-lg">{tasks.length}</span>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-600 dark:text-gray-400">Tugas yang Dipin</span>
-                        <span className="font-semibold text-gray-800 dark:text-white">
+                    <div className="flex justify-between items-center p-4 bg-white/50 dark:bg-gray-700/50 rounded-xl">
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">Tugas yang Dipin</span>
+                        <span className="font-bold text-gray-800 dark:text-white text-lg">
                             {tasks.filter(task => task.pinned).length}
                         </span>
                     </div>
 
-                    <div className="flex justify-between items-center">
-                        <span className="text-gray-600 dark:text-gray-400">Rata-rata per Hari</span>
-                        <span className="font-semibold text-gray-800 dark:text-white">
+                    <div className="flex justify-between items-center p-4 bg-white/50 dark:bg-gray-700/50 rounded-xl">
+                        <span className="text-gray-700 dark:text-gray-300 font-medium">Rata-rata per Hari</span>
+                        <span className="font-bold text-gray-800 dark:text-white text-lg">
                             {streakData.currentStreak > 0 ? (totalTasksCompleted / Math.max(streakData.currentStreak, 1)).toFixed(1) : '0'}
                         </span>
                     </div>
                 </div>
             </div>
 
-            {/* Tombol Bagikan Tugas */}
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+            {/* Share Tasks Button - Modern Design */}
+            <div className="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl shadow-lg p-6">
                 <button
                     onClick={() => setShowTaskReport(true)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition-colors duration-200 flex items-center justify-center gap-2"
+                    className="w-full bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 flex items-center justify-center gap-3 border border-white/20"
                 >
-                    📤 Bagikan Tugas
+                    <span className="text-2xl">📤</span>
+                    <span className="text-lg">Bagikan Tugas</span>
                 </button>
             </div>
 
-            {/* Motivasi */}
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg shadow-md p-6 text-white text-center">
-                <h3 className="text-lg font-semibold mb-2">💪 Tetap Konsisten!</h3>
-                <p className="text-indigo-100">
+            {/* Motivational Section - Enhanced Gradient */}
+            <div className="bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-700 rounded-2xl shadow-xl p-8 text-white text-center border border-indigo-500/20">
+                <div className="text-4xl mb-4">💪</div>
+                <h3 className="text-2xl font-bold mb-4">Tetap Konsisten!</h3>
+                <p className="text-indigo-100 text-lg leading-relaxed">
                     Setiap menit kecil yang Anda dedikasikan membawa Anda lebih dekat ke tujuan kreator Anda.
                     Teruslah membangun kebiasaan yang luar biasa!
                 </p>

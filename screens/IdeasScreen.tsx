@@ -2,27 +2,29 @@ import React, { useState } from 'react';
 import useLocalStorage from '../hooks/useLocalStorage';
 import type { AISettings, AchievementIdea } from '../types';
 import { generateTaskIdeas, generateAchievementIdeas } from '../services/aiService';
+import AffirmationScreen from './AffirmationScreen';
 
 interface IdeasScreenProps {
     onAddTask: (text: string) => void;
     onAddAchievement: (idea: AchievementIdea) => void;
+    onAddAffirmation: (text: string) => void;
 }
 
-const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }) => {
+const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement, onAddAffirmation }) => {
     const [settings] = useLocalStorage<AISettings>('ai-settings', {
         provider: 'gemini',
         model: 'gemini-2.5-flash',
         apiKey: '',
     });
     
-    const [activeTab, setActiveTab] = useState<'tasks' | 'achievements'>('tasks');
+    const [activeTab, setActiveTab] = useState<'tasks' | 'achievements' | 'affirmations'>('tasks');
     const [goal, setGoal] = useState('');
     const [taskIdeas, setTaskIdeas] = useState<string[]>([]);
     const [achievementIdeas, setAchievementIdeas] = useState<AchievementIdea[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleTabChange = (tab: 'tasks' | 'achievements') => {
+    const handleTabChange = (tab: 'tasks' | 'achievements' | 'affirmations') => {
         setActiveTab(tab);
         setError(null);
         setIsLoading(false);
@@ -76,6 +78,9 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
     const handleAddTaskAndRemoveIdea = (idea: string) => {
         onAddTask(idea);
         setTaskIdeas(prevIdeas => prevIdeas.filter(i => i !== idea));
+        // Simpan tanggal pembuatan ke localStorage
+        const taskDate = new Date().toISOString();
+        localStorage.setItem(`task_created_${Date.now()}`, taskDate);
     };
 
     const handleAddAchievementAndRemoveIdea = (idea: AchievementIdea) => {
@@ -84,33 +89,59 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
     };
 
     const renderContent = () => {
+        if (activeTab === 'affirmations') {
+            return <AffirmationScreen onAddAffirmation={onAddAffirmation} />;
+        }
+
         const isTaskTab = activeTab === 'tasks';
         return (
             <>
-                <div className="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-                    <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-4">
-                        Generator Ide AI: {isTaskTab ? 'Tugas' : 'Pencapaian'}
-                    </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-4">
-                        {isTaskTab
-                            ? 'Jelaskan tujuan utama Anda, dan AI akan menyarankan tugas mikro 1 menit.'
-                            : 'Dapatkan ide pencapaian yang memotivasi berdasarkan tujuan Anda.'}
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                        <input
-                            type="text"
-                            value={goal}
-                            onChange={(e) => setGoal(e.target.value)}
-                            placeholder="contoh: Tingkatkan produktivitas harian"
-                            className="flex-grow p-3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition"
-                            disabled={isLoading}
-                        />
+                <div className="bg-gradient-to-br from-gray-50 to-white dark:from-gray-800 dark:to-gray-900 rounded-2xl shadow-lg p-8 border border-gray-100 dark:border-gray-700">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-md">
+                            <span className="text-white text-xl">{isTaskTab ? '🎯' : '🏆'}</span>
+                        </div>
+                        <div>
+                            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">
+                                Generator Ide AI: {isTaskTab ? 'Tugas' : 'Pencapaian'}
+                            </h2>
+                            <p className="text-gray-600 dark:text-gray-400 mt-1">
+                                {isTaskTab
+                                    ? 'Jelaskan tujuan utama Anda, dan AI akan menyarankan tugas mikro 1 menit.'
+                                    : 'Dapatkan ide pencapaian yang memotivasi berdasarkan tujuan Anda.'}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="relative">
+                            <input
+                                type="text"
+                                value={goal}
+                                onChange={(e) => setGoal(e.target.value)}
+                                placeholder="contoh: Tingkatkan produktivitas harian"
+                                className="w-full p-4 bg-white/80 dark:bg-gray-700/80 backdrop-blur-sm text-gray-800 dark:text-gray-200 rounded-xl border-2 border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-300 shadow-sm"
+                                disabled={isLoading}
+                            />
+                        </div>
                         <button
                             onClick={isTaskTab ? handleGenerateTaskIdeas : handleGenerateAchievementIdeas}
-                            className="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
                             disabled={isLoading || !goal.trim()}
                         >
-                            {isLoading ? 'Menghasilkan...' : 'Hasilkan Ide'}
+                            <span className="flex items-center justify-center gap-2">
+                                {isLoading ? (
+                                    <>
+                                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                                        Menghasilkan...
+                                    </>
+                                ) : (
+                                    <>
+                                        <span className="text-xl">✨</span>
+                                        Hasilkan Ide
+                                    </>
+                                )}
+                            </span>
                         </button>
                     </div>
                 </div>
@@ -138,7 +169,7 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
                         ))}
                     </div>
                 )}
-                
+
                 {achievementIdeas.length > 0 && (
                      <div className="space-y-3">
                         <h3 className="text-xl font-semibold text-gray-700 dark:text-gray-300">Ide Pencapaian yang Dihasilkan:</h3>
@@ -163,15 +194,15 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
         );
     };
 
-    const TabButton: React.FC<{ tab: 'tasks' | 'achievements', label: string }> = ({ tab, label }) => {
+    const TabButton: React.FC<{ tab: 'tasks' | 'achievements' | 'affirmations', label: string }> = ({ tab, label }) => {
         const isActive = activeTab === tab;
         return (
             <button
                 onClick={() => handleTabChange(tab)}
-                className={`px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors focus:outline-none ${
+                className={`flex-1 px-6 py-3 text-sm font-semibold rounded-xl transition-all duration-300 focus:outline-none ${
                     isActive
-                        ? 'bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 border-b-2 border-indigo-500'
-                        : 'text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400'
+                        ? 'bg-gradient-to-r from-blue-600 to-indigo-700 text-white shadow-lg transform scale-105'
+                        : 'text-gray-600 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-white/50 dark:hover:bg-gray-700/50'
                 }`}
             >
                 {label}
@@ -180,14 +211,20 @@ const IdeasScreen: React.FC<IdeasScreenProps> = ({ onAddTask, onAddAchievement }
     }
 
     return (
-        <div className="space-y-6 animate-fade-in">
-            <div className="border-b border-gray-300 dark:border-gray-700">
-                <nav className="-mb-px flex space-x-4">
+        <div className="space-y-8 animate-fade-in">
+            {/* Tab Navigation - Modern Design */}
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-lg rounded-2xl shadow-lg p-2 border border-white/20 dark:border-gray-700/50">
+                <nav className="flex space-x-2">
                     <TabButton tab="tasks" label="Ide Tugas" />
                     <TabButton tab="achievements" label="Ide Pencapaian" />
+                    <TabButton tab="affirmations" label="Afirmasi" />
                 </nav>
             </div>
-            {renderContent()}
+
+            {/* Content Container */}
+            <div className="space-y-6">
+                {renderContent()}
+            </div>
         </div>
     );
 };

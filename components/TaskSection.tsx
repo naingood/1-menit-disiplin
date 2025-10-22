@@ -77,7 +77,7 @@ const TaskSection: React.FC<TaskSectionProps> = ({
 
       {/* Tasks List - Collapsible */}
       <div className={`divide-y divide-gray-100 dark:divide-gray-700 transition-all duration-300 ${
-        isExpanded ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
+        isExpanded ? 'max-h-none opacity-100' : 'max-h-0 opacity-0 overflow-hidden'
       }`}>
         {tasks.length > 0 ? (
           tasks.map(task => {

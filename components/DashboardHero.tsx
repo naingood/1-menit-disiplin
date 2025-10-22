@@ -13,6 +13,9 @@ const DashboardHero: React.FC<DashboardHeroProps> = ({ tasks, achievements, toda
     return total + (task.completions[today] || 0);
   }, 0);
 
+  const tasksCompletedTodayCount = tasks.filter(task => (task.completions[today] || 0) > 0).length;
+  const productivityToday = tasks.length > 0 ? Math.round((tasksCompletedTodayCount / tasks.length) * 100) : 0;
+
   const pinnedTasks = tasks.filter(task => task.pinned).length;
   const unlockedAchievements = achievements.length;
 
@@ -73,42 +76,53 @@ const DashboardHero: React.FC<DashboardHeroProps> = ({ tasks, achievements, toda
   return (
     <div className="mb-8">
       {/* Main Hero Card */}
-      <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-800 dark:via-gray-800 dark:to-gray-900 rounded-2xl p-6 shadow-lg border border-blue-100 dark:border-gray-700 mb-6">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white text-xl">{motivation.emoji}</span>
-            </div>
-            <div>
-              <h2 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                {motivation.message}
-              </h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">{motivation.subMessage}</p>
-            </div>
-          </div>
-          <div className="text-4xl">👑</div>
+      <div className="bg-gradient-to-br from-blue-900 to-black rounded-2xl p-6 shadow-lg border border-blue-800 mb-6">
+        <div className="mb-4">
+          <h2 className="text-xl font-bold text-white">
+            {motivation.message}
+          </h2>
+          <p className="text-sm text-white">{motivation.subMessage}</p>
         </div>
 
         {/* Stats Grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm border border-white/50 dark:border-gray-600/50">
             <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{totalCompletionsToday}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide">Hari Ini</div>
+            <div className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Hari Ini</div>
           </div>
 
           <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm border border-white/50 dark:border-gray-600/50">
             <div className="text-2xl font-bold text-orange-600 dark:text-orange-400">{streak}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide">Runtutan</div>
+            <div className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Runtutan</div>
           </div>
 
           <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm border border-white/50 dark:border-gray-600/50">
             <div className="text-2xl font-bold text-green-600 dark:text-green-400">{pinnedTasks}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide">Di-Pin</div>
+            <div className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Di-Pin</div>
           </div>
 
           <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-xl p-4 text-center shadow-sm border border-white/50 dark:border-gray-600/50">
             <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">{unlockedAchievements}</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400 uppercase tracking-wide">Pencapaian</div>
+            <div className="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Pencapaian</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Productivity Today Card */}
+      <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-4 shadow-md border border-emerald-100 dark:border-emerald-700 mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-full flex items-center justify-center shadow-md">
+              <span className="text-white text-lg">📈</span>
+            </div>
+            <div>
+              <div className="text-sm font-semibold text-gray-800 dark:text-gray-200">Produktivitas Hari Ini</div>
+              <div className="text-lg font-bold text-emerald-600 dark:text-emerald-400">{productivityToday}%</div>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className="text-xs text-gray-500 dark:text-gray-400">Target</div>
+            <div className="text-sm font-semibold text-gray-700 dark:text-gray-300">100%</div>
           </div>
         </div>
       </div>

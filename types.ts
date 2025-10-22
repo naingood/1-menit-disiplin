@@ -5,6 +5,7 @@ export interface Task {
   achievementId?: string; // Menambahkan tautan opsional ke sebuah pencapaian
   pinned?: boolean; // Menandai apakah task di-pin
   pinnedOrder?: number; // Urutan pin (1-3)
+  createdAt: string; // Tanggal pembuatan tugas
 }
 
 export interface StreakData {
@@ -44,4 +45,10 @@ export interface Achievement {
 export interface AchievementIdea {
   title: string;
   description: string;
+}
+
+export interface Affirmation {
+  id: number;
+  text: string;
+  date: string;
 }

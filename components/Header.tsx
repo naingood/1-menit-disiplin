@@ -141,17 +141,17 @@ const Header: React.FC<HeaderProps> = ({ onSettingsClick, onProfileClick }) => {
 
   return (
     <>
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-40">
+      <header className="bg-gradient-to-br from-blue-900 to-black border-b border-blue-800 px-4 py-3 sticky top-0 z-40">
         <div className="flex items-center justify-between max-w-2xl mx-auto">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
               <span className="text-white text-sm">⚡</span>
             </div>
             <div>
-              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+              <h1 className="text-lg font-semibold text-white">
                 1 Menit Disiplin
               </h1>
-              <p className="text-xs text-gray-500 dark:text-gray-400">
+              <p className="text-xs text-white">
                 Bangun konsistensi setiap hari
               </p>
             </div>
@@ -169,7 +169,7 @@ const Header: React.FC<HeaderProps> = ({ onSettingsClick, onProfileClick }) => {
             <div className="relative menu-container">
               <button
                 onClick={() => setShowMenu(!showMenu)}
-                className="p-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                className="p-2 text-white hover:text-gray-200 hover:bg-white/10 rounded-lg transition-colors"
                 aria-label="Menu"
               >
                 <span className="text-lg">⋮</span>

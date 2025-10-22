@@ -20,8 +20,8 @@ const NavButton: React.FC<{
       aria-label={label}
       className={`flex flex-col items-center justify-center w-full pt-2 pb-1 transition-colors duration-200 ${
         isActive
-          ? 'text-indigo-400'
-          : 'text-gray-400 hover:text-indigo-400'
+          ? 'text-white'
+          : 'text-gray-300 hover:text-white'
       }`}
     >
       {children}
@@ -32,7 +32,7 @@ const NavButton: React.FC<{
 
 const BottomNav: React.FC<BottomNavProps> = ({ activeScreen, setActiveScreen }) => {
   return (
-    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-gray-800 border-t border-gray-700 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] flex justify-around">
+    <nav className="fixed bottom-0 left-0 right-0 h-16 bg-gradient-to-br from-blue-900 to-black border-t border-blue-800 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] flex justify-around">
       <NavButton label="Tugas" screen="home" activeScreen={activeScreen} onClick={setActiveScreen}>
         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
       </NavButton>

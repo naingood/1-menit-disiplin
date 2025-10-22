@@ -25,9 +25,18 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, today, onComplete, onDelete, 
       <div className="flex-grow">
         <p className="text-lg text-gray-800 dark:text-gray-100">{task.text}</p>
         <div className="flex items-center justify-between">
-            <p className="text-sm text-gray-500 dark:text-gray-400">
-            Selesai hari ini: {completionsToday}
-            </p>
+            <div className="flex flex-col gap-1">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                Selesai hari ini: {completionsToday}
+                </p>
+                <p className="text-xs text-gray-400 dark:text-gray-500">
+                Dibuat: {new Date(task.createdAt).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric'
+                })}
+                </p>
+            </div>
             {achievementTitle && (
                 <button
                     onClick={handleViewClick}
