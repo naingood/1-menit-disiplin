@@ -144,6 +144,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ onThemeChange, tasks, o
                     completions: {},
                     pinned,
                     pinnedOrder: pinned ? pinnedOrder : undefined,
+                    createdAt: new Date().toISOString(),
                 });
             }
 
@@ -416,6 +417,17 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ onThemeChange, tasks, o
                         placeholder={`Masukkan kunci API ${settings.provider === 'gemini' ? 'Gemini' : settings.provider === 'openai' ? 'OpenAI' : 'Anthropic'} Anda`}
                         className="w-full p-3 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded-lg border-2 border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                     />
+                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                        Belum punya API Key?{' '}
+                        <a
+                            href="https://wa.me/6281223290202?text=Hai%20Isnainy%2C%20saya%20request%20API%20Key%20nya%20untuk%201%20Menit%20Disiplin"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 dark:text-blue-400 hover:underline"
+                        >
+                            Request via WhatsApp
+                        </a>
+                    </p>
                 </div>
                  <div className="flex items-center justify-end gap-4 pt-4">
                     {saved && <p className="text-sm text-green-600 dark:text-green-400">Pengaturan AI disimpan!</p>}
